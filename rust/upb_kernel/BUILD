@@ -16,7 +16,7 @@ rust_library(
     ],
     deps = [
         ":upb_c_api",
-        "//rust:common",
+        "//rust/common",
     ],
 )
 

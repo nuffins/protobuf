@@ -33,6 +33,10 @@
 use std::fmt;
 use std::slice;
 
+mod proxied;
+
+pub use proxied::{Proxied, ViewFor, MutFor, View, Mut};
+
 /// Represents error during deserialization.
 #[derive(Debug, Clone)]
 pub struct ParseError;

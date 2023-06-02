@@ -35,12 +35,6 @@ rust_library(
     }),
 )
 
-rust_library(
-    name = "common",
-    srcs = ["common.rs"],
-    visibility = ["//rust:__subpackages__"],
-)
-
 proto_lang_toolchain(
     name = "proto_rust_upb_toolchain",
     command_line = "--rust_out=experimental-codegen=enabled,kernel=upb:$(OUT)",

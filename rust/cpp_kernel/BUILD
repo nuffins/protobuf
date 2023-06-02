@@ -14,7 +14,7 @@ rust_library(
         "//src/google/protobuf:__subpackages__",
         "//rust:__subpackages__",
     ],
-    deps = ["//rust:common"],
+    deps = ["//rust/common"],
 )
 
 rust_test(
