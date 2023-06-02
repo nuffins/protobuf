@@ -159,17 +159,7 @@ class RepeatedScalarFieldContainer(BaseContainer[_T], MutableSequence[_T]):
 
   def extend(self, elem_seq: Iterable[_T]) -> None:
     """Extends by appending the given iterable. Similar to list.extend()."""
-    if elem_seq is None:
-      return
-    try:
-      elem_seq_iter = iter(elem_seq)
-    except TypeError:
-      if not elem_seq:
-        # silently ignore falsy inputs :-/.
-        # TODO(ptucker): Deprecate this behavior. b/18413862
-        return
-      raise
-
+    elem_seq_iter = iter(elem_seq)
     new_values = [self._type_checker.CheckValue(elem) for elem in elem_seq_iter]
     if new_values:
       self._values.extend(new_values)

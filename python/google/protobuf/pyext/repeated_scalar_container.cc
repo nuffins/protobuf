@@ -465,14 +465,6 @@ static int AssSubscript(PyObject* pself, PyObject* slice, PyObject* value) {
 PyObject* Extend(RepeatedScalarContainer* self, PyObject* value) {
   cmessage::AssureWritable(self->parent);
 
-  // TODO(ptucker): Deprecate this behavior. b/18413862
-  if (value == Py_None) {
-    Py_RETURN_NONE;
-  }
-  if ((Py_TYPE(value)->tp_as_sequence == nullptr) && PyObject_Not(value)) {
-    Py_RETURN_NONE;
-  }
-
   ScopedPyObjectPtr iter(PyObject_GetIter(value));
   if (iter == nullptr) {
     PyErr_SetString(PyExc_TypeError, "Value must be iterable");
