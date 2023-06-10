@@ -28,32 +28,32 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-//! Kernel-agnostic logic for the Rust Protobuf Runtime.
-//!
-//! For kernel-specific logic this crate delegates to the respective `__runtime`
-//! crate.
+//! Kernel-agnostic logic for the Rust Protobuf runtime that should not be
+//! exposed to through the `protobuf` path but must be public for use by
+//! generated code.
 
-#[cfg(cpp_kernel)]
-#[path = "cpp.rs"]
-pub mod __runtime;
-#[cfg(upb_kernel)]
-#[path = "upb.rs"]
-pub mod __runtime;
+use std::slice;
 
-/// Everything in `__internal` is allowed to change without it being considered
-/// a breaking change for the protobuf library. Nothing in here should be
-/// exported in `protobuf.rs`.
-#[path = "internal.rs"]
-pub mod __internal;
+/// Represents an ABI-stable version of `NonNull<[u8]>`/`string_view` (a
+/// borrowed slice of bytes) for FFI use only.
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct PtrAndLen {
+    /// Pointer to the first byte.
+    /// Borrows the memory.
+    pub ptr: *const u8,
 
-use std::fmt;
+    /// Length of the `[u8]` pointed to by `ptr`.
+    pub len: usize,
+}
 
-/// Represents error during deserialization.
-#[derive(Debug, Clone)]
-pub struct ParseError;
-
-impl fmt::Display for ParseError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Couldn't deserialize given bytes into a proto")
+impl PtrAndLen {
+    /// Unsafely dereference this slice.
+    ///
+    /// # Safety
+    /// - `ptr` must be valid for `len` bytes.
+    /// - `ptr` must be non-null, even if `len` is 0.
+    pub unsafe fn as_ref<'a>(self) -> &'a [u8] {
+        slice::from_raw_parts(self.ptr, self.len)
     }
 }
